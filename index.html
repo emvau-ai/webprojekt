@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Levermann"/>
+<meta name="theme-color" content="#000000"/>
+<title>Levermann ACWI</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23000'/><text y='72' x='12' font-size='72'>📈</text></svg>"/>
+<style>
+:root {
+  --bg:        #06070b;
+  --bg2:       #0e111a;
+  --card:      rgba(28,30,38,0.66);
+  --card2:     rgba(44,46,58,0.60);
+  --card3:     rgba(72,76,92,0.55);
+  --sep:       rgba(255,255,255,0.10);
+  --sep2:      rgba(255,255,255,0.06);
+  --text1:     #f7f8fb;
+  --text2:     rgba(247,248,251,0.64);
+  --text3:     rgba(247,248,251,0.38);
+  --blue:      #0A84FF;
+  --blue-bg:   rgba(10,132,255,0.16);
+  --green:     #30D158;
+  --green-bg:  rgba(48,209,88,0.16);
+  --red:       #FF453A;
+  --red-bg:    rgba(255,69,58,0.16);
+  --yellow:    #FFD60A;
+  --yellow-bg: rgba(255,214,10,0.16);
+  --orange:    #FF9F0A;
+  --safe-top:  env(safe-area-inset-top,0px);
+  --safe-bot:  env(safe-area-inset-bottom,0px);
+  --r-card:    22px;
+  --r-btn:     16px;
+  --r-pill:    100px;
+  --shadow-lg: 0 24px 60px rgba(0,0,0,0.45);
+  --shadow-md: 0 14px 34px rgba(0,0,0,0.32);
+  --font:      -apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',sans-serif;
+  --mono:      'SF Mono','Fira Code','JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{
+  min-height:100%;background:var(--bg);color:var(--text1);
+  font-family:var(--font);overscroll-behavior:none;
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  background:
+    radial-gradient(1100px 640px at 8% -6%, rgba(10,132,255,0.22), transparent 55%),
+    radial-gradient(820px 560px at 96% 2%, rgba(94,92,230,0.18), transparent 52%),
+    radial-gradient(760px 600px at 50% 108%, rgba(48,209,88,0.10), transparent 58%),
+    linear-gradient(180deg,#06070b 0%,#05060a 46%,#0a0d15 100%);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent 16%,rgba(255,255,255,0.015));
+}
+/* Scrollbar */
+::-webkit-scrollbar{width:0px;}
+/* Range slider — iOS style */
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:6px;
+  border-radius:999px;background:linear-gradient(90deg,var(--blue),rgba(120,124,145,0.55));outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:26px;height:26px;
+  border-radius:50%;background:#fff;cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,0.5),0 0 0 6px rgba(255,255,255,0.08);
+}
+input[type=range]::-moz-range-thumb{
+  width:26px;height:26px;border:none;
+  border-radius:50%;background:#fff;cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,0.5),0 0 0 6px rgba(255,255,255,0.08);
+}
+input[type=range]:disabled{opacity:0.4;}
+/* Password input */
+input[type=password]{
+  width:100%;padding:14px 16px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:14px;
+  color:var(--text1);font-family:var(--font);font-size:16px;outline:none;
+  -webkit-appearance:none;transition:border-color .2s ease, box-shadow .2s ease;
+}
+input[type=password]:focus{border-color:rgba(10,132,255,0.55);box-shadow:0 0 0 4px rgba(10,132,255,0.18);}
+input[type=password]::placeholder{color:var(--text3);}
+/* Global Apple-style button feedback */
+button{transition:transform .16s ease, opacity .16s ease, background .2s ease, box-shadow .2s ease;}
+button:hover:not(:disabled){transform:translateY(-1px);}
+button:active:not(:disabled){transform:scale(0.98);}
+@supports (backdrop-filter:blur(20px)){.glass{backdrop-filter:saturate(180%) blur(22px);-webkit-backdrop-filter:saturate(180%) blur(22px);}}
+/* Details */
+details summary{list-style:none;cursor:pointer;}
+details summary::-webkit-details-marker{display:none;}
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.fade-up{animation:fadeUp .3s ease both;}
+.pulse{animation:pulse 1.6s ease-in-out infinite;}
+/* Utility */
+.row-tap:active{opacity:0.6;transition:opacity .1s;}
+</style>
+</head>
+<body>
+<div id="root"><div id="boot" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#000;color:rgba(255,255,255,0.4);font-family:-apple-system,sans-serif;gap:12px"><div style="width:32px;height:32px;border:2px solid rgba(255,255,255,0.1);border-top-color:#007AFF;border-radius:50%;animation:spin .8s linear infinite"></div><div style="font-size:15px">Lade App…</div></div></div>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+<script>
+// Show errors visibly instead of black screen
+window.onerror = function(msg, src, line, col, err) {
+  var r = document.getElementById('root');
+  if (r) r.innerHTML = '<div style="padding:24px;font-family:-apple-system,sans-serif;background:#000;min-height:100vh"><div style="background:#ff453a22;border:1px solid #ff453a44;border-radius:14px;padding:20px;color:#ff453a"><div style="font-size:17px;font-weight:700;margin-bottom:8px">&#9888; JavaScript Fehler</div><div style="font-size:14px;margin-bottom:6px">' + String(msg).replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]}) + '</div><div style="font-size:12px;color:rgba(255,255,255,0.4);font-family:monospace">Zeile: ' + line + ' · ' + (src||'').split('/').pop() + '</div></div></div>';
+};
+// Detect if CDNs failed to load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    if (!window.React) {
+      document.getElementById('root').innerHTML = '<div style="padding:24px;color:#ff453a;font-family:-apple-system,sans-serif;background:#000;min-height:100vh"><h2>CDN Ladefehler</h2><p style="margin-top:8px;color:rgba(255,255,255,0.5)">React konnte nicht geladen werden. Bitte Internetverbindung pruefen und neu laden.</p></div>';
+    }
+  }, 5000);
+});
+</script>
+<script type="text/babel">
+/* CHANGELOG 6.2.0 (2026-10-09): Complete 13-criterion Levermann model; unavailable data is explicit. */
+const {useState,useRef,useMemo,useCallback,useEffect} = React;
+const APP_VERSION = "6.2.0";
+const BUILD_DATE = "2026-10-09";
+const MAX_SYMBOLS = 500;
+const FINNHUB_PLAN = {free: {callsPerMinute: 60, burst: 30}, paid: {callsPerMinute: 300, burst: 30}};
+
+// Live-only symbol universe: supplied by the analyst, never embedded in the app.
+const DEFAULT_SYMBOLS = "AAPL, MSFT, NVDA, AMZN, META";
+
+// Identifier-only lookup recovered from the prior release; no prices or fundamentals.
+const WKN_MAP = {
+  "AAPL": "865985",
+  "MSFT": "870747",
+  "NVDA": "918422",
+  "AMZN": "906866",
+  "META": "A1JWVX",
+  "GOOGL": "A14Y6F",
+  "TSLA": "A1CX3T",
+  "BRK-B": "900567",
+  "LLY": "858560",
+  "JPM": "850628",
+  "V": "A0NC7B",
+  "UNH": "869561",
+  "XOM": "852549",
+  "MA": "A0F602",
+  "AVGO": "A2JG9Z",
+  "JNJ": "853260",
+  "PG": "852062",
+  "HD": "866953",
+  "COST": "888351",
+  "MRK": "A0YD8Q",
+  "ABBV": "A1J84E",
+  "CVX": "852552",
+  "KO": "850663",
+  "ORCL": "871460",
+  "PEP": "851995",
+  "BAC": "858388",
+  "TMO": "A0JL9W",
+  "ACN": "A0YD9V",
+  "CSCO": "878841",
+  "MCD": "856958",
+  "WMT": "860853",
+  "DIS": "855686",
+  "IBM": "851399",
+  "GE": "851144",
+  "NOW": "A1JX7H",
+  "AMD": "863186",
+  "QCOM": "883121",
+  "PM": "A0NDB9",
+  "INTU": "886343",
+  "TXN": "852654",
+  "AMGN": "867900",
+  "GS": "920332",
+  "BLK": "928193",
+  "AXP": "819686",
+  "RTX": "A2PJL9",
+  "CAT": "858213",
+  "PFE": "852009",
+  "MS": "885836",
+  "NEE": "A1H81L",
+  "LMT": "894648",
+  "NFLX": "552484",
+  "UBER": "A2PHHG",
+  "ADBE": "871981",
+  "CRM": "A14181",
+  "INTC": "855654",
+  "AMAT": "865247",
+  "BKNG": "A2JEXP",
+  "GILD": "885823",
+  "ISRG": "A0MKDD",
+  "VRTX": "A1JJB6",
+  "SAP.DE": "716460",
+  "ALV.DE": "840400",
+  "BMW.DE": "519000",
+  "MBG.DE": "710000",
+  "BAYN.DE": "575200",
+  "DTE.DE": "555750",
+  "MUV2.DE": "843002",
+  "BAS.DE": "515100",
+  "DBK.DE": "514000",
+  "SIE.DE": "723610",
+  "ADS.DE": "500340",
+  "IFX.DE": "623100",
+  "MRK.DE": "659990",
+  "RHM.DE": "703000",
+  "RWE.DE": "703712",
+  "ASML": "A1J4U4",
+  "NVO": "A1XA8R",
+  "AZN": "886455",
+  "SHEL": "A3CZBT",
+  "NESN.SW": "A0Q4DC",
+  "NOVN.SW": "904278",
+  "ROG.SW": "855167",
+  "UBS": "A12DFH",
+  "CFR.SW": "A1W5CV",
+  "ZURN.SW": "A0Q4WY",
+  "MC.PA": "853292",
+  "OR.PA": "853888",
+  "AIR.PA": "938914",
+  "BHP": "908101",
+  "TSM": "909800",
+  "BABA": "A117TB",
+  "TCEHY": "A1138D",
+  "INFY": "A0NECU",
+  "HDB": "A0F6TN",
+  "VALE": "897998",
+  "PBR": "896475",
+  "TM": "853510",
+  "SONY": "869712",
+  "MUFG": "891592",
+  "SAP": "716460",
+};
+const WKN_PROFILE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function deriveWknFromIsin(isin) {
+  const value = String(isin || "").trim().toUpperCase();
+  return /^DE[A-Z0-9]{10}$/.test(value) ? value.slice(5, 11) : null;
+}
+
+function securityIdentity(ticker, isin) {
+  const normalized = String(isin || "").trim().toUpperCase() || null;
+  return { wkn: WKN_MAP[ticker] || deriveWknFromIsin(normalized), isin: normalized };
+}
+
+async function fetchSecurityIdentity(stock, key, signal) {
+  const mapped = securityIdentity(stock.ticker, null);
+  if (mapped.wkn || !key) return mapped;
+  const path = "stock/profile2?symbol=" + encodeURIComponent(stock.ticker);
+  const cacheKey = "fh:wkn:" + stock.ticker;
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey) || "null"); } catch(e) {}
+  if (!cached || !cached.ts || Date.now() - cached.ts >= WKN_PROFILE_TTL_MS) {
+    const profile = await fhGet(path, key, signal, WKN_PROFILE_TTL_MS);
+    cached = { ts: Date.now(), data: profile || {} };
+    try { localStorage.setItem(cacheKey, JSON.stringify(cached)); } catch(e) {}
+  }
+  const isin = cached && cached.data && cached.data.isin;
+  return securityIdentity(stock.ticker, isin);
+}
+
+// ── Module-level constants ─────────────────────────────────────────
+const QUOTE_TTL_MS = 60 * 1000;
+const FUNDAMENTAL_TTL_MS = 24 * 60 * 60 * 1000;
+const CONCURRENCY = 4;
+const BATCH_DELAY_MS = 250;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 900;
+const REQUEST_TIMEOUT_MS = 12000;
+const FINANCE_SECTORS = ["Finanzen","Versicherung"];
+
+class TokenBucket {
+  constructor(callsPerMinute=60, burst=30){this.rate=callsPerMinute/60000;this.capacity=Math.max(1,burst);this.tokens=this.capacity;this.at=Date.now();this.waiters=[];}
+  take(signal){return new Promise((resolve,reject)=>{if(signal?.aborted)return reject(new DOMException("Abgebrochen","AbortError"));this.waiters.push({resolve,reject,signal});this.pump();});}
+  pump(){const now=Date.now();this.tokens=Math.min(this.capacity,this.tokens+(now-this.at)*this.rate);this.at=now;const next=this.waiters[0];if(!next)return;if(next.signal?.aborted){this.waiters.shift();next.reject(new DOMException("Abgebrochen","AbortError"));return this.pump();}if(this.tokens>=1){this.tokens-=1;this.waiters.shift();next.resolve();return this.pump();}setTimeout(()=>this.pump(),Math.ceil((1-this.tokens)/this.rate));}
+}
+const RATE_BUCKET = new TokenBucket(FINNHUB_PLAN.free.callsPerMinute, FINNHUB_PLAN.free.burst);
+const FH_CACHE = new Map();
+const FH_INFLIGHT = new Map();
+
+// ── Module-level helper (used by both calcScore AND fetchFinnhubStock) ─
+// ok(v): true if v is a valid finite number (excludes null/undefined/NaN)
+// okz(v): same but also allows 0 — use for %, growth, performance values
+const ok  = v => v !== null && v !== undefined && isFinite(v) && v !== 0;
+const okz = v => v !== null && v !== undefined && isFinite(v);
+
+
+// ── Levermann Scoring Engine ───────────────────────────────────────
+// Pure, deterministic — no side effects, no network.
+// Uses module-level ok/okz helpers.
+function calcScore(d, sector) {
+  const fin = FINANCE_SECTORS.includes(sector);
+  const large = d.capClass === "large";
+  const C13 = [];
+  const add = (id,name,score,value,reasoning,available=true) => C13.push({id,name,score,value,reasoning,available});
+  const missing = (id,name,why) => add(id,name,0,"n/a",why,false);
+  const pct = (v) => (v > 0 ? "+" : "") + v.toFixed(1) + "%";
+  const band = (v, name, good, bad) => {
+    if (!okz(v)) return missing(name.id,name.label,"Nicht verfügbar");
+    return v > good ? add(name.id,name.label,1,pct(v),">"+good+"%") : v < bad ? add(name.id,name.label,-1,pct(v),"<"+bad+"%") : add(name.id,name.label,0,pct(v),bad+"–"+good+"%");
+  };
+  // 1–5: Levermann thresholds; percentages are decimal for 1–3.
+  if (!okz(d.roe)) missing(1,"EK-Rendite","Nicht verfügbar"); else if(d.roe>0.20)add(1,"EK-Rendite",1,(d.roe*100).toFixed(1)+"%",">20%"); else if(d.roe>=0.10)add(1,"EK-Rendite",0,(d.roe*100).toFixed(1)+"%","10–20%"); else add(1,"EK-Rendite",-1,(d.roe*100).toFixed(1)+"%","<10%");
+  if(fin) missing(2,"EBIT-Marge","Finanzwert: Kriterium nicht anwenden"); else if(!okz(d.ebitMargin)) missing(2,"EBIT-Marge","Nicht verfügbar"); else if(d.ebitMargin>0.12)add(2,"EBIT-Marge",1,(d.ebitMargin*100).toFixed(1)+"%",">12%"); else if(d.ebitMargin>=0.06)add(2,"EBIT-Marge",0,(d.ebitMargin*100).toFixed(1)+"%","6–12%"); else add(2,"EBIT-Marge",-1,(d.ebitMargin*100).toFixed(1)+"%","<6%");
+  if(!okz(d.equityRatio)) missing(3,"EK-Quote","Nicht verfügbar"); else {const [hi,mid]=fin?[.10,.05]:[.25,.15]; add(3,"EK-Quote",d.equityRatio>hi?1:d.equityRatio>=mid?0:-1,(d.equityRatio*100).toFixed(1)+"%",fin?">10 / 5–10 / <5% (Finanzwert)":">25 / 15–25 / <15%");}
+  if(!okz(d.pe5yAvg)||d.pe5yAvg<=0) missing(4,"KGV 5J","Nicht verfügbar: Finnhub liefert keinen belastbaren 5J-Durchschnitt"); else add(4,"KGV 5J",d.pe5yAvg<12?1:d.pe5yAvg<=16?0:-1,d.pe5yAvg.toFixed(1),d.pe5yAvg<12?"<12":d.pe5yAvg<=16?"12–16":">16");
+  if(!okz(d.pe)||d.pe<=0) missing(5,"KGV aktuell","Nicht verfügbar"); else add(5,"KGV aktuell",d.pe<12?1:d.pe<=16?0:-1,d.pe.toFixed(1),d.pe<12?"<12":d.pe<=16?"12–16":">16");
+  // 6: contrarian for large caps; small caps with <=5 analysts are direct.
+  if(!okz(d.analystBuyPct)||!okz(d.analystSellPct)||!okz(d.analystCount)) missing(6,"Analystenmeinungen","Nicht verfügbar"); else {const direct=!large&&d.analystCount<=5; const score=direct?(d.analystBuyPct>d.analystSellPct?1:d.analystSellPct>d.analystBuyPct?-1:0):(d.analystSellPct>d.analystBuyPct?1:d.analystBuyPct>d.analystSellPct?-1:0); add(6,"Analystenmeinungen",score,d.analystCount+" Analysten",direct?"Small Cap ≤5: Kaufmehrheit +1":"Kontraindikator: Verkaufmehrheit +1");}
+  // 7–8 require dedicated data; do not substitute EPS surprise for price reaction/revisions.
+  if(!okz(d.earningsReactionPct)) missing(7,"Quartalsreaktion","Nicht verfügbar: Kurs-vs.-Index am Folgetag nicht berechenbar"); else add(7,"Quartalsreaktion",d.earningsReactionPct>1?1:d.earningsReactionPct<-1?-1:0,pct(d.earningsReactionPct),">+1 / <−1% vs. Index");
+  if(!okz(d.epsRevision4w)) missing(8,"Gewinnrevisionen","Nicht verfügbar: 4-Wochen-EPS-Revision nicht geliefert"); else add(8,"Gewinnrevisionen",d.epsRevision4w>5?1:d.epsRevision4w<-5?-1:0,pct(d.epsRevision4w),">+5 / <−5%");
+  if(!okz(d.perf6m)) missing(9,"Kurs heute vs 6M","Nicht verfügbar"); else add(9,"Kurs heute vs 6M",d.perf6m>5?1:d.perf6m<-5?-1:0,pct(d.perf6m),">+5 / <−5%");
+  if(!okz(d.perf12m)) missing(10,"Kurs heute vs 12M","Nicht verfügbar"); else add(10,"Kurs heute vs 12M",d.perf12m>5?1:d.perf12m<-5?-1:0,pct(d.perf12m),">+5 / <−5%");
+  if(!okz(d.perf6m)||!okz(d.perf12m)) missing(11,"Kursmomentum","Nicht verfügbar"); else add(11,"Kursmomentum",d.perf6m>5&&d.perf12m<=0?1:d.perf6m<-5&&d.perf12m>=0?-1:0,"6M "+pct(d.perf6m)+" / 12M "+pct(d.perf12m),"6M/12M-Regel");
+  if(!large) missing(12,"Dreimonatsreversal","Nur Large Caps"); else if(!okz(d.reversal3m)) missing(12,"Dreimonatsreversal","Nicht verfügbar: Monatsrenditen vs. Index fehlen"); else add(12,"Dreimonatsreversal",d.reversal3m,"3M vs Index","3 aufeinanderfolgende Monate");
+  if(!okz(d.epsGrowthNextVsCurrent)) missing(13,"Gewinnwachstum","Nicht verfügbar: nächstes-vs.-aktuelles EPS fehlt"); else add(13,"Gewinnwachstum",d.epsGrowthNextVsCurrent>5?1:d.epsGrowthNextVsCurrent<-5?-1:0,pct(d.epsGrowthNextVsCurrent),">+5 / <−5%");
+  const total=C13.reduce((s,c)=>s+c.score,0), assessed=C13.filter(c=>c.available).length;
+  const rec=large?(total>=4?"KAUFEN":total>=3?"HALTEN":"VERKAUFEN"):(total>=7?"KAUFEN":total>=5?"HALTEN":"VERKAUFEN");
+  return {criteria:C13,totalScore:total,recommendation:rec,dataCompleteness:Math.round(assessed/13*100),assessedCount:assessed,capClass:large?"Large Cap":"Small/Mid Cap"};
+}
+
+// ── Finnhub Direct Client ──────────────────────────────────────────
+// Primary source only; API errors are surfaced, never replaced with synthetic data.
+function withTimeout(signal) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  if (signal) signal.addEventListener("abort", () => controller.abort(), {once:true});
+  return {signal:controller.signal, clear:()=>clearTimeout(timer)};
+}
+
+async function fhGet(path, key, signal, customTtl) {
+  const url = "https://finnhub.io/api/v1/" + path + "&token=" + key;
+  const cacheKey = "fh:"+url;
+  const ttl = customTtl || (/quote\?/.test(path) ? QUOTE_TTL_MS : FUNDAMENTAL_TTL_MS);
+  let hit = FH_CACHE.get(url);
+  try { const stored=JSON.parse(localStorage.getItem(cacheKey)||"null"); if(stored) hit=stored; } catch(e) {}
+  if (hit && Date.now() - hit.ts < ttl) return hit.data;
+  await RATE_BUCKET.take(signal);
+  if (FH_INFLIGHT.has(url)) return FH_INFLIGHT.get(url);
+  const pending = (async()=>{
+    const ctl = withTimeout(signal);
+    try {
+      const resp = await fetch(url,{method:"GET",mode:"cors",credentials:"omit",signal:ctl.signal,headers:{"Accept":"application/json"}});
+      if (resp.status===401||resp.status===403) throw new Error("API Key ungültig ("+resp.status+") — Key prüfen");
+      if (resp.status===429) { const e=new Error("Rate Limit (429)"); e.retryable=true; throw e; }
+      if (!resp.ok) throw new Error("Finnhub HTTP "+resp.status);
+      const text=await resp.text();
+      if (!text||!text.trim()) return {};
+      if (text.trim().charAt(0)==="<") throw new Error("Unerwartete HTML-Antwort");
+      const data=JSON.parse(text);
+      if (data&&data.error) throw new Error("Finnhub: "+data.error);
+      FH_CACHE.set(url,{data,ts:Date.now()}); try { localStorage.setItem(cacheKey,JSON.stringify({data,ts:Date.now()})); } catch(e) {}
+      return data;
+    } finally { ctl.clear(); FH_INFLIGHT.delete(url); }
+  })();
+  FH_INFLIGHT.set(url,pending);
+  return pending;
+}
+
+async function fetchFinnhubStock(stock,key,signal) {
+  const t=stock.ticker;
+  const paths=[
+    ["metric","stock/metric?symbol="+t+"&metric=all"],
+    ["recs","recommendation?symbol="+t],
+    ["quote","quote?symbol="+t],
+    ["target","price-target?symbol="+t],
+    ["earnings","stock/earnings?symbol="+t]
+  ];
+  const settled=await Promise.allSettled(paths.map(([,path])=>fhGet(path,key,signal)));
+  if (signal && signal.aborted) throw new DOMException("Abgebrochen","AbortError");
+  const failures=settled.filter(x=>x.status==="rejected");
+  if (failures.length===settled.length) throw new Error(failures[0].reason?.message||"Alle Finnhub-Endpunkte fehlgeschlagen");
+  const [metrics,recs,quote,target,earnings]=settled.map(x=>x.status==="fulfilled"?x.value:{});
+  const identity = await fetchSecurityIdentity(stock, key, signal);
+  const endpointErrors=failures.map((x,i)=>paths[i][0]+": "+(x.reason?.message||"Fehler")).join(" | ");
+  const m=metrics?.metric||{};
+  let roe=ok(m.roeTTM)?m.roeTTM/100:null; if(roe!==null&&(roe>5||roe<-2)) roe=null;
+  let ebitMargin=ok(m.operatingMarginTTM)?m.operatingMarginTTM/100:null;
+  let equityRatio=okz(m.totalDebt2TotalEquityAnnual)&&m.totalDebt2TotalEquityAnnual>=0?1/(1+m.totalDebt2TotalEquityAnnual):null;
+  let pe=ok(m.peTTM)&&m.peTTM>0&&m.peTTM<2000?m.peTTM:null;
+  let pe5yAvg=null;
+  let analystBuyPct=null,analystSellPct=null,analystCount=null;
+  if(Array.isArray(recs)&&recs.length){const r=recs[0],buy=(r.strongBuy||0)+(r.buy||0),sell=(r.sell||0)+(r.strongSell||0),tot=buy+(r.hold||0)+sell;if(tot){analystBuyPct=buy/tot*100;analystSellPct=sell/tot*100;analystCount=tot;}}
+  const currentPrice=quote&&ok(quote.c)&&quote.c>0?quote.c:null;
+  let analystTargetUpside=target&&ok(target.targetMean)&&currentPrice?(target.targetMean-currentPrice)/currentPrice*100:null;
+  if(analystTargetUpside!==null&&Math.abs(analystTargetUpside)>200) analystTargetUpside=null;
+  let earningsReactionPct=null;
+  const currency=t.endsWith(".SW")?"CHF":t.endsWith(".L")?"GBP":[".PA",".DE",".MI",".MC",".AS",".BR",".HE",".ST",".CO"].some(x=>t.endsWith(x))?"EUR":t.endsWith(".T")?"JPY":t.endsWith(".AX")?"AUD":t.endsWith(".KS")?"KRW":t.endsWith(".TW")?"TWD":"USD";
+  return {wkn:identity.wkn||null,isin:identity.isin||null,roe,ebitMargin,equityRatio,pe,pe5yAvg,analystBuyPct,earningsReactionPct,epsRevision4w:null,analystSellPct,analystCount,capClass:ok(m.marketCapitalization)&&m.marketCapitalization>5000?"large":"small",perf6m:okz(m["26WeekPriceReturnDaily"])?m["26WeekPriceReturnDaily"]:null,perf12m:okz(m["52WeekPriceReturnDaily"])?m["52WeekPriceReturnDaily"]:null,epsGrowthNextVsCurrent:null,analystTargetUpside,currentPrice,currency,_endpointErrors:endpointErrors||null};
+}
+
+async function fetchWithRetry(stock,key,signal) {
+  let lastErr;
+  for(let i=0;i<=MAX_RETRIES;i++){
+    try{return await fetchFinnhubStock(stock,key,signal);}
+    catch(e){lastErr=e;if(e.name==="AbortError"||/401|403/.test(e.message)) throw e;if(i<MAX_RETRIES) await new Promise((resolve,reject)=>{const t=setTimeout(resolve,Math.min(30000, RETRY_DELAY_MS*Math.pow(2,i)));signal?.addEventListener("abort",()=>{clearTimeout(t);reject(new DOMException("Abgebrochen","AbortError"));},{once:true});});}
+  }
+  throw lastErr||new Error("Finnhub-Abruf fehlgeschlagen");
+}
+
+// ── Region helpers ─────────────────────────────────────────────────
+const EU_FLAGS = ["🇩🇪","🇫🇷","🇬🇧","🇨🇭","🇳🇱","🇮🇹","🇪🇸","🇫🇮","🇸🇪","🇩🇰","🇧🇪","🇦🇹","🇵🇹","🇳🇴"];
+const REGIONS  = ["Alle","🇺🇸 USA","🇪🇺 Europa","🇯🇵 Japan","🇨🇳 China","🇮🇳 Indien","🇦🇺 Ozeanien","Andere"];
+
+function regionMatch(s, f) {
+  if (f==="Alle") return true;
+  if (f==="🇺🇸 USA") return s.region==="🇺🇸";
+  if (f==="🇪🇺 Europa") return EU_FLAGS.includes(s.region);
+  if (f==="🇯🇵 Japan") return s.region==="🇯🇵";
+  if (f==="🇨🇳 China") return s.region==="🇨🇳";
+  if (f==="🇮🇳 Indien") return s.region==="🇮🇳";
+  if (f==="🇦🇺 Ozeanien") return ["🇦🇺","🇳🇿"].includes(s.region);
+  return !["🇺🇸",...EU_FLAGS,"🇯🇵","🇨🇳","🇮🇳","🇦🇺","🇳🇿"].includes(s.region);
+}
+
+// ── CSV Export ─────────────────────────────────────────────────────
+function exportCSV(rows, name) {
+  const csv = rows.map(r =>
+    r.map(v => '"'+String((v !== null && v !== undefined ? v : "")).replace(/"/g,'""')+'"').join(",")
+  ).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"}));
+  a.download = name; a.click();
+}
+
+
+// ── Apple Design Tokens (JS) ─────────────────────────────────────
+const A = {
+  bg:"#06070b",bg2:"rgba(14,17,26,0.85)",
+  card:"rgba(28,30,38,0.66)",card2:"rgba(44,46,58,0.60)",card3:"rgba(72,76,92,0.55)",
+  sep:"rgba(255,255,255,0.10)",sep2:"rgba(255,255,255,0.06)",
+  t1:"#f7f8fb",t2:"rgba(247,248,251,0.64)",t3:"rgba(247,248,251,0.38)",
+  blue:"#0A84FF",   blueBg:"rgba(10,132,255,0.16)",
+  green:"#30D158",  greenBg:"rgba(48,209,88,0.16)",
+  red:"#FF453A",    redBg:"rgba(255,69,58,0.16)",
+  yellow:"#FFD60A", yellowBg:"rgba(255,214,10,0.16)",
+  orange:"#FF9F0A", orangeBg:"rgba(255,159,10,0.15)",
+  cardBorder:"1px solid rgba(255,255,255,0.10)",
+  cardShadow:"0 18px 46px rgba(0,0,0,0.34)",
+  glass:{backdropFilter:"saturate(180%) blur(22px)",WebkitBackdropFilter:"saturate(180%) blur(22px)"},
+  font:"-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif",
+  mono:"'SF Mono','Fira Code',monospace",
+};
+
+// ── Score / Rec helpers ───────────────────────────────────────────
+const scoreCol = s => s>=4?A.green:s>=0?A.yellow:A.red;
+const scoreBg  = s => s>=4?A.greenBg:s>=0?A.yellowBg:A.redBg;
+const recCol   = r => r==="KAUFEN"?A.green:r==="VERKAUFEN"?A.red:A.yellow;
+const recBg    = r => r==="KAUFEN"?A.greenBg:r==="VERKAUFEN"?A.redBg:A.yellowBg;
+const fmtS     = s => (s>0?"+":"")+String(s);
+
+// ── Atomic Components ─────────────────────────────────────────────
+
+// Apple-style card wrapper
+function Card({children, style={}, pad="18px 20px"}) {
+  return (
+    <div className="glass" style={{
+      background:A.card, borderRadius:22, overflow:"hidden",
+      marginBottom:14, border:A.cardBorder, boxShadow:A.cardShadow,
+      backdropFilter:"saturate(180%) blur(22px)", WebkitBackdropFilter:"saturate(180%) blur(22px)",
+      ...style,
+    }}>
+      {pad ? <div style={{padding:pad}}>{children}</div> : children}
+    </div>
+  );
+}
+
+// Primary button
+function PrimaryBtn({children, onClick, disabled=false, danger=false}) {
+  const bg = danger
+    ? "linear-gradient(180deg,#ff5b52,#ff453a)"
+    : disabled ? A.card3
+    : "linear-gradient(180deg,#2f9dff,#0A84FF)";
+  return (
+    <button onClick={onClick} disabled={disabled} style={{
+      width:"100%", padding:"16px", borderRadius:18, border:"1px solid rgba(255,255,255,0.12)",
+      background:bg, color:disabled?"rgba(255,255,255,0.3)":"#fff",
+      fontWeight:600, fontSize:17, fontFamily:A.font,
+      cursor:disabled?"not-allowed":"pointer",
+      boxShadow:disabled?"none":(danger?"0 14px 28px rgba(255,69,58,0.30)":"0 14px 30px rgba(10,132,255,0.32)"),
+      transition:"all .15s", WebkitTapHighlightColor:"transparent",
+      letterSpacing:"-0.2px",
+    }}>
+      {children}
+    </button>
+  );
+}
+
+// Secondary (ghost) button
+function GhostBtn({children, onClick, color=A.blue}) {
+  return (
+    <button onClick={onClick} style={{
+      padding:"9px 16px", borderRadius:12, border:"1px solid rgba(255,255,255,0.10)",
+      background:"rgba(255,255,255,0.09)", color,
+      fontWeight:600, fontSize:13, fontFamily:A.font,
+      cursor:"pointer", flexShrink:0,
+    }}>
+      {children}
+    </button>
+  );
+}
+
+// Pill badge (KAUFEN / HALTEN / VERKAUFEN)
+function RecPill({rec, size=10}) {
+  return (
+    <span style={{
+      display:"inline-block", padding:"3px 10px", borderRadius:100,
+      background:recBg(rec), color:recCol(rec),
+      fontSize:size, fontWeight:700, letterSpacing:"0.3px",
+      border:"1px solid "+recCol(rec)+"33",
+    }}>{rec}</span>
+  );
+}
+
+// Score pill with mini bar
+function ScorePill({score}) {
+  const col = scoreCol(score);
+  const pct = ((score+13)/26*100).toFixed(0)+"%";
+  return (
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+      <span style={{
+        display:"inline-block", padding:"4px 10px", borderRadius:100,
+        background:scoreBg(score), color:col,
+        fontSize:16, fontWeight:700, fontFamily:A.mono,
+        border:"1px solid "+col+"33", lineHeight:1,
+      }}>{fmtS(score)}</span>
+      <div style={{width:40,height:3,background:"rgba(255,255,255,0.1)",borderRadius:2,overflow:"hidden"}}>
+        <div style={{height:"100%",width:pct,background:col,borderRadius:2}}/>
+      </div>
+    </div>
+  );
+}
+
+// Criteria dot row
+function CritDots({criteria}) {
+  return (
+    <div style={{display:"flex",gap:2,justifyContent:"center",flexWrap:"wrap"}}>
+      {(criteria||[]).map(c=>(
+        <div key={c.id} style={{
+          width:5,height:5,borderRadius:"50%",
+          background:c.score===1?A.green:c.score===-1?A.red:"rgba(255,255,255,0.2)",
+        }} title={c.name+": "+(c.score>0?"+1":c.score<0?"-1":"0")}/>
+      ))}
+    </div>
+  );
+}
+
+// Source badge
+function SrcBadge(){ return <span style={{fontSize:10,fontWeight:600,color:A.green,fontFamily:A.mono}}>LIVE</span>; }
+
+// Data completeness indicator
+function DataPct({pct}) {
+  const col = pct>=70?A.green:pct>=40?A.yellow:A.red;
+  return (
+    <span style={{fontSize:11,fontWeight:600,color:col,fontFamily:A.mono}}>
+      {pct}%
+    </span>
+  );
+}
+
+// Criteria expand panel
+function CriteriaPanel({stock}) {
+  return (
+    <div style={{
+      background:A.bg2, borderTop:"1px solid "+A.sep,
+      padding:"14px 16px",
+      display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:6,
+    }}>
+      {(stock.criteria||[]).map(c=>(
+        <div key={c.id} style={{
+          display:"flex",alignItems:"flex-start",gap:10,
+          padding:"9px 11px",borderRadius:12,
+          background:c.score===1?A.greenBg:c.score===-1?A.redBg:"rgba(255,255,255,0.04)",
+          border:"1px solid "+(c.score===1?A.green+"22":c.score===-1?A.red+"22":A.sep),
+        }}>
+          <div style={{
+            width:26,height:26,borderRadius:"50%",flexShrink:0,
+            display:"flex",alignItems:"center",justifyContent:"center",
+            fontSize:10,fontWeight:700,fontFamily:A.mono,
+            background:c.score===1?A.green+"25":c.score===-1?A.red+"25":"rgba(255,255,255,0.08)",
+            color:c.score===1?A.green:c.score===-1?A.red:A.t3,
+            border:"1px solid "+(c.score===1?A.green+"44":c.score===-1?A.red+"44":"transparent"),
+          }}>
+            {c.score>0?"+1":c.score<0?"-1":"0"}
+          </div>
+          <div style={{minWidth:0}}>
+            <div style={{fontSize:11,fontWeight:600,color:A.t1,lineHeight:1.3}}>{c.name}</div>
+            <div style={{fontSize:11,color:A.blue,fontFamily:A.mono,marginTop:1}}>{c.value}</div>
+            <div style={{fontSize:10,color:A.t3,marginTop:2,lineHeight:1.4}}>{c.reasoning}</div>
+          </div>
+        </div>
+      ))}
+      {stock.assessedCount!==undefined && <div style={{gridColumn:"1/-1",fontSize:10,color:A.t3}}>Bewertbar: {stock.assessedCount}/13 · {stock.capClass}</div>}
+      {stock._endpointErrors && (
+        <div style={{
+          gridColumn:"1/-1",fontSize:10,color:A.yellow,
+          padding:"7px 10px",background:A.yellowBg,borderRadius:10,
+          border:"1px solid "+A.yellow+"22",fontFamily:A.mono,
+        }}>
+          ⚠ {stock._endpointErrors}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Data source banner
+// Connection test panel
+async function testFinnhubConnection(key) {
+  const url = "https://finnhub.io/api/v1/quote?symbol=AAPL&token="+key;
+  let resp;
+  try {
+    resp = await fetch(url,{method:"GET",mode:"cors",credentials:"omit",headers:{"Accept":"application/json"}});
+  } catch(e) {
+    return {ok:false,msg:"Netzwerkfehler: "+e.message,raw:null};
+  }
+  if (resp.status===401||resp.status===403)
+    return {ok:false,msg:"API Key ungültig ("+resp.status+")",raw:null};
+  if (resp.status===429)
+    return {ok:false,msg:"Rate Limit (429) — 60s warten",raw:null};
+  if (!resp.ok) return {ok:false,msg:"HTTP "+resp.status,raw:null};
+  let text="";
+  try{text=await resp.text();}catch(e){}
+  if (text.trim().charAt(0)==="<")
+    return {ok:false,msg:"HTML-Antwort (Rate-Limit?)",raw:text.slice(0,60)};
+  let data;
+  try{data=JSON.parse(text);}catch(e){return {ok:false,msg:"Kein JSON",raw:text.slice(0,60)};}
+  if (!data||!data.c||data.c<=0)
+    return {ok:false,msg:"Ungültige Daten",raw:text.slice(0,60)};
+  return {ok:true,msg:"Verbindung OK · AAPL: $"+data.c.toFixed(2),raw:null};
+}
+
+function ConnTestPanel({apiKey, onResult}) {
+  const [state,  setState]  = useState("idle");
+  const [result, setResult] = useState(null);
+  const [prevKey,setPrevKey]= useState("");
+
+  useEffect(()=>{
+    if (!apiKey||apiKey.length<8){setState("idle");setResult(null);onResult(false);return;}
+    if (apiKey===prevKey) return;
+    const t = setTimeout(async()=>{
+      setState("loading");
+      const res = await testFinnhubConnection(apiKey);
+      setState(res.ok?"ok":"fail");
+      setResult(res);
+      setPrevKey(apiKey);
+      onResult(res.ok);
+    },800);
+    return ()=>clearTimeout(t);
+  },[apiKey]);
+
+  async function retest(){
+    setState("loading");setResult(null);
+    const res = await testFinnhubConnection(apiKey);
+    setState(res.ok?"ok":"fail");
+    setResult(res);
+    setPrevKey(apiKey);
+    onResult(res.ok);
+  }
+
+  const col = state==="ok"?A.green:state==="fail"?A.red:A.t3;
+  const icon= state==="ok"?"✅":state==="fail"?"❌":state==="loading"?"⏳":"🔌";
+
+  return (
+    <div style={{
+      marginTop:12,padding:"12px 14px",borderRadius:12,
+      background:state==="ok"?A.greenBg:state==="fail"?A.redBg:"rgba(255,255,255,0.04)",
+      border:"1px solid "+(state==="ok"?A.green+"33":state==="fail"?A.red+"33":A.sep),
+      transition:"all .3s",
+    }}>
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <span style={{fontSize:18}}>{icon}</span>
+        <div style={{flex:1,fontSize:13,fontWeight:state!=="idle"?600:400,color:col}}>
+          {state==="idle"&&"Verbindungstest startet automatisch…"}
+          {state==="loading"&&<span className="pulse">Teste Finnhub-Verbindung…</span>}
+          {state==="ok" && result && result.msg}
+            {state==="fail" && result && result.msg}
+        </div>
+        <GhostBtn onClick={retest} color={A.blue}>
+          {state==="loading"?"…":"Testen"}
+        </GhostBtn>
+      </div>
+      {result && result.raw && (
+        <div style={{
+          marginTop:8,fontSize:11,color:A.t3,fontFamily:A.mono,
+          wordBreak:"break-all",lineHeight:1.5,
+        }}>{result.raw}</div>
+      )}
+    </div>
+  );
+}
+
+// ── Region Filter Pills (EU_FLAGS and REGIONS defined in logic block above) ──────────
+
+function RegionFilter({value, onChange}) {
+  return (
+    <div style={{
+      display:"flex",gap:6,overflowX:"auto",paddingBottom:4,
+      WebkitOverflowScrolling:"touch",
+    }}>
+      {REGIONS.map(r=>(
+        <button key={r} onClick={()=>onChange(r)} style={{
+          flexShrink:0,padding:"6px 14px",borderRadius:100,border:"none",
+          background:value===r?A.blue:"rgba(255,255,255,0.08)",
+          color:value===r?"#fff":A.t2,
+          fontSize:13,fontWeight:value===r?600:400,
+          cursor:"pointer",fontFamily:A.font,transition:"all .15s",
+          whiteSpace:"nowrap",
+        }}>{r}</button>
+      ))}
+    </div>
+  );
+}
+
+// ── Results List Row ──────────────────────────────────────────────
+const GRID = "28px 1fr 72px 90px 44px 54px";
+
+function ResultRow({stock, rank, expanded, onToggle}) {
+  return (
+    <div>
+      <div
+        onClick={onToggle}
+        className="row-tap"
+        style={{
+          display:"grid",gridTemplateColumns:GRID,
+          padding:"13px 16px",
+          borderBottom:"1px solid "+A.sep2,
+          cursor:"pointer",alignItems:"center",gap:4,
+          background:expanded?"rgba(255,255,255,0.03)":"transparent",
+          transition:"background .15s",
+        }}
+      >
+        {/* Rank */}
+        <div style={{
+          width:24,height:24,borderRadius:"50%",
+          display:"flex",alignItems:"center",justifyContent:"center",
+          background:rank<=3?A.blue+"22":"transparent",
+          color:rank<=3?A.blue:A.t3,
+          fontSize:11,fontWeight:700,fontFamily:A.mono,
+        }}>{rank}</div>
+
+        {/* Name + ticker */}
+        <div style={{minWidth:0}}>
+          <div style={{
+            display:"flex",alignItems:"center",gap:6,
+            fontSize:15,fontWeight:600,color:A.t1,
+            lineHeight:1.2,
+          }}>
+            <span>{stock.region}</span>
+            <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+              {stock.name}
+            </span>
+          </div>
+          <div style={{
+            fontSize:12,color:A.t3,fontFamily:A.mono,marginTop:2,
+            display:"flex",alignItems:"center",gap:6,
+          }}>
+            <span>{stock.ticker}</span>
+            <span title={stock.isin ? "ISIN: "+stock.isin : undefined} style={{color:stock.wkn?A.t2:A.t3}}>WKN {stock.wkn||stock.isin||"–"}</span>
+            {stock.currentPrice!=null&&(
+              <span style={{color:A.t3}}>
+                {stock.currency} {stock.currentPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Score */}
+        <ScorePill score={stock.totalScore}/>
+
+        {/* Signal */}
+        <div style={{textAlign:"center"}}>
+          <RecPill rec={stock.recommendation}/>
+        </div>
+
+        {/* Data% */}
+        <div style={{textAlign:"center"}}>
+          <DataPct pct={stock.dataCompleteness||0}/>
+        </div>
+
+        {/* Source */}
+        <div style={{textAlign:"center"}}>
+          <SrcBadge stock={stock} />
+        </div>
+      </div>
+      {expanded&&<CriteriaPanel stock={stock}/>}
+    </div>
+  );
+}
+
+// ── Results Table ─────────────────────────────────────────────────
+function ResultsTable({results}) {
+  const [exp, setExp] = useState(null);
+  const [reg, setReg] = useState("Alle");
+
+  const top30 = useMemo(()=>
+    results
+      .filter(r=>regionMatch(r,reg))
+      .sort((a,b)=>b.totalScore-a.totalScore)
+      .slice(0,30),
+    [results,reg]
+  );
+
+  if (!results.length) return null;
+
+  return (
+    <div>
+
+      <RegionFilter value={reg} onChange={setReg}/>
+
+      <div style={{marginTop:12,background:A.card,borderRadius:22,overflow:"hidden",border:A.cardBorder,boxShadow:A.cardShadow,backdropFilter:"saturate(180%) blur(22px)",WebkitBackdropFilter:"saturate(180%) blur(22px)"}}>
+        {/* Table header */}
+        <div style={{
+          display:"grid",gridTemplateColumns:GRID,
+          padding:"10px 16px",gap:4,
+          borderBottom:"1px solid "+A.sep,
+          background:"rgba(255,255,255,0.06)",
+        }}>
+          {["#","Name","Score","Signal","Daten","Quelle"].map((h,i)=>(
+            <div key={h} style={{
+              fontSize:11,fontWeight:600,color:A.t3,
+              textTransform:"uppercase",letterSpacing:"0.5px",
+              textAlign:i>=2?"center":i===1?"left":"center",
+            }}>{h}</div>
+          ))}
+        </div>
+
+        {top30.map((s,i)=>(
+          <ResultRow
+            key={s.ticker}
+            stock={s}
+            rank={i+1}
+            expanded={exp===s.ticker}
+            onToggle={()=>setExp(exp===s.ticker?null:s.ticker)}
+            
+          />
+        ))}
+
+        <div style={{
+          padding:"12px 16px",textAlign:"center",
+          fontSize:12,color:A.t3,lineHeight:1.5,
+        }}>
+          {"📡 Finnhub Live"}
+          {" · Deterministisches Levermann-Scoring · Keine Anlageberatung"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Report Tab ────────────────────────────────────────────────────
+function ReportTab({results}) {
+  const [sort,  setSort]  = useState("score");
+  const [filter,setFilter]= useState("ALLE");
+
+  const sorted = useMemo(()=>[...results]
+    .filter(r=>filter==="ALLE"||r.recommendation===filter)
+    .sort((a,b)=>{
+      if(sort==="name") return a.name.localeCompare(b.name);
+      if(sort==="rating"){
+        const o=["KAUFEN","HALTEN","VERKAUFEN"];
+        return o.indexOf(a.recommendation)-o.indexOf(b.recommendation);
+      }
+      return b.totalScore-a.totalScore;
+    }),[results,filter,sort]);
+
+  const stats = useMemo(()=>({
+    total:results.length,
+    kaufen:results.filter(r=>r.recommendation==="KAUFEN").length,
+    halten:results.filter(r=>r.recommendation==="HALTEN").length,
+    vk:results.filter(r=>r.recommendation==="VERKAUFEN").length,
+    live:results.length,
+    avg:results.length>0
+      ?(results.reduce((s,r)=>s+(r.totalScore||0),0)/results.length).toFixed(1)
+      :"—",
+  }),[results]);
+
+  if (!results.length) return (
+    <div style={{
+      display:"flex",flexDirection:"column",alignItems:"center",
+      justifyContent:"center",padding:"60px 24px",textAlign:"center",
+    }}>
+      <div style={{
+        width:64,height:64,borderRadius:22,
+        background:"linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))",display:"flex",alignItems:"center",
+        justifyContent:"center",fontSize:32,marginBottom:16,border:"1px solid rgba(255,255,255,0.14)",
+      }}>📋</div>
+      <div style={{fontSize:20,fontWeight:600,marginBottom:8}}>
+        Noch keine Ergebnisse
+      </div>
+      <div style={{fontSize:15,color:A.t2,lineHeight:1.5}}>
+        Starte zuerst eine Analyse im Scanner-Tab.
+      </div>
+    </div>
+  );
+
+  function doExport(){
+    const hdr=["Rang","Name","Ticker","Region","Sektor","Score","Rating","Daten%","Kurs","Währung","Quelle"];
+    const rows=sorted.map((s,i)=>[
+      i+1,s.name,s.ticker,s.region,s.sector,
+      fmtS(s.totalScore),s.recommendation,(s.dataCompleteness||0)+"%",
+      s.currentPrice!=null?s.currentPrice.toFixed(2):"—",
+      s.currency||"—",
+      "LIVE",
+    ]);
+    const csv=rows.map(r=>r.map(v=>'"'+String((v !== null && v !== undefined ? v : "")).replace(/"/g,'""')+'"').join(",")).join("\n");
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob(["\uFEFF"+hdr.map(h=>'"'+h+'"').join(",")+
+      "\n"+csv],{type:"text/csv;charset=utf-8;"}));
+    a.download="levermann_"+new Date().toISOString().slice(0,10)+".csv";
+    a.click();
+  }
+
+  const statItems = [
+    {l:"Analysiert",v:stats.total,     c:A.blue,   i:"🔍"},
+    {l:"Ø Score",   v:stats.avg,       c:A.t1,     i:"📊"},
+    {l:"Live",      v:stats.live,c:A.green,i:"📡"},
+    {l:"KAUFEN",    v:stats.kaufen,    c:A.green,  i:"▲"},
+    {l:"HALTEN",    v:stats.halten,    c:A.yellow, i:"●"},
+    {l:"VERKAUFEN", v:stats.vk,        c:A.red,    i:"▼"},
+  ];
+
+  const RPT_GRID = "32px 1fr 68px 68px 64px 42px 58px 60px 78px";
+  const filterCols = {
+    "ALLE":     A.blue,
+    "KAUFEN":   A.green,
+    "HALTEN":   A.yellow,
+    "VERKAUFEN":A.red,
+  };
+
+  return (
+    <div>
+      {/* Stats */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:12}}>
+        {statItems.slice(0,6).map(s=>(
+          <div key={s.l} style={{
+            background:A.card,borderRadius:20,padding:"16px 12px",textAlign:"center",border:A.cardBorder,boxShadow:A.cardShadow,backdropFilter:"saturate(180%) blur(18px)",WebkitBackdropFilter:"saturate(180%) blur(18px)",
+          }}>
+            <div style={{fontSize:20,marginBottom:4}}>{s.i}</div>
+            <div style={{
+              fontSize:22,fontWeight:700,color:s.c,
+              fontFamily:A.mono,lineHeight:1,
+            }}>{s.v}</div>
+            <div style={{
+              fontSize:10,color:A.t3,marginTop:4,
+              textTransform:"uppercase",letterSpacing:"0.5px",
+            }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <Card pad="14px 16px">
+        <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+          <div style={{display:"flex",gap:6,flexWrap:"wrap",flex:1}}>
+            {["ALLE","KAUFEN","HALTEN","VERKAUFEN"].map(f=>(
+              <button key={f} onClick={()=>setFilter(f)} style={{
+                padding:"6px 14px",borderRadius:100,border:"none",
+                background:filter===f?filterCols[f]+"22":"rgba(255,255,255,0.06)",
+                color:filter===f?filterCols[f]:A.t2,
+                fontSize:13,fontWeight:filter===f?600:400,
+                cursor:"pointer",fontFamily:A.font,transition:"all .15s",
+              }}>{f}</button>
+            ))}
+          </div>
+          <div style={{display:"flex",gap:6}}>
+            {[{id:"score",l:"Score"},{id:"name",l:"Name"},{id:"rating",l:"Rating"}].map(s=>(
+              <button key={s.id} onClick={()=>setSort(s.id)} style={{
+                padding:"6px 12px",borderRadius:100,border:"none",
+                background:sort===s.id?A.blue+"22":"rgba(255,255,255,0.06)",
+                color:sort===s.id?A.blue:A.t2,
+                fontSize:13,fontWeight:sort===s.id?600:400,
+                cursor:"pointer",fontFamily:A.font,transition:"all .15s",
+              }}>{"↕ "+s.l}</button>
+            ))}
+            <button onClick={doExport} style={{
+              padding:"6px 14px",borderRadius:100,border:"none",
+              background:A.blue+"22",color:A.blue,
+              fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:A.font,
+            }}>⬇ CSV</button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Table */}
+      <div style={{background:A.card,borderRadius:22,overflow:"hidden",border:A.cardBorder,boxShadow:A.cardShadow,backdropFilter:"saturate(180%) blur(22px)",WebkitBackdropFilter:"saturate(180%) blur(22px)"}}>
+        <div style={{
+          display:"grid",gridTemplateColumns:RPT_GRID,
+          padding:"10px 16px",gap:4,
+          borderBottom:"1px solid "+A.sep,background:"rgba(255,255,255,0.06)",
+          position:"sticky",top:0,zIndex:10,
+        }}>
+          {["#","Name","Ticker","WKN","Score","Daten","Kurs","Quelle","Rating"].map((h,i)=>(
+            <div key={h} style={{
+              fontSize:10,fontWeight:600,color:A.t3,
+              textTransform:"uppercase",letterSpacing:"0.5px",
+              textAlign:i<=1?"left":"center",
+            }}>{h}</div>
+          ))}
+        </div>
+
+        {sorted.map((s,i)=>(
+          <div key={s.ticker} style={{
+            display:"grid",gridTemplateColumns:RPT_GRID,
+            padding:"11px 16px",gap:4,alignItems:"center",
+            borderBottom:"1px solid "+A.sep2,
+            background:i%2===0?"transparent":"rgba(255,255,255,0.015)",
+          }}>
+            <div style={{
+              fontSize:11,fontWeight:700,fontFamily:A.mono,
+              color:i<3?A.blue:A.t3,
+            }}>{i+1}</div>
+            <div>
+              <div style={{
+                display:"flex",alignItems:"center",gap:5,
+                fontSize:13,fontWeight:600,lineHeight:1.2,
+              }}>
+                <span style={{fontSize:12}}>{s.region}</span>
+                <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                  {s.name}
+                </span>
+              </div>
+              <div style={{fontSize:10,color:A.t3,fontFamily:A.mono,marginTop:1}}>
+                {s.ticker}
+              </div>
+            </div>
+            <div style={{textAlign:"center"}}>
+              <span style={{
+                fontSize:10,fontWeight:600,fontFamily:A.mono,
+                color:A.t3,
+                background:"transparent",
+                padding:"2px 6px",borderRadius:6,
+              }}>{s.ticker}</span>
+            </div>
+            <div style={{textAlign:"center"}}>
+              <span title={s.isin ? "ISIN: "+s.isin : undefined} style={{fontSize:10,fontWeight:600,fontFamily:A.mono,color:s.wkn?A.t2:A.t3}}> {s.wkn||s.isin||"–"}</span>
+            </div>
+            <div style={{textAlign:"center"}}>
+              <div style={{
+                fontSize:15,fontWeight:700,fontFamily:A.mono,
+                color:scoreCol(s.totalScore),lineHeight:1,marginBottom:3,
+              }}>{fmtS(s.totalScore)}</div>
+              <CritDots criteria={s.criteria}/>
+            </div>
+            <div style={{textAlign:"center"}}>
+              <DataPct pct={s.dataCompleteness||0}/>
+            </div>
+            <div style={{textAlign:"center"}}>
+              {s.currentPrice!=null?(
+                <div>
+                  <div style={{fontSize:11,fontWeight:600,fontFamily:A.mono}}>
+                    {s.currentPrice.toFixed(2)}
+                  </div>
+                  <div style={{fontSize:9,color:A.t3}}>{s.currency||""}</div>
+                </div>
+              ):<span style={{color:A.t3,fontSize:11}}>—</span>}
+            </div>
+            <div style={{textAlign:"center"}}>
+              <SrcBadge stock={s} />
+            </div>
+            <div style={{textAlign:"center"}}>
+              <RecPill rec={s.recommendation} size={9}/>
+            </div>
+          </div>
+        ))}
+
+        <div style={{padding:"12px 16px",textAlign:"center",fontSize:12,color:A.t3,lineHeight:1.5}}>
+          {sorted.length} Aktien · {new Date().toLocaleDateString("de-DE")} · v{APP_VERSION} · Keine Anlageberatung
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Root App ──────────────────────────────────────────────────────
+function App() {
+  const [apiKey,   setApiKey]   = useState("");
+  const [connOk,   setConnOk]   = useState(false);
+  const [symbolsText, setSymbolsText] = useState(DEFAULT_SYMBOLS);
+  const [count,    setCount]    = useState(5);
+  const [plan, setPlan] = useState("free");
+  const [running,  setRunning]  = useState(false);
+  const [results,  setResults]  = useState([]);
+  const [errors,   setErrors]   = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [curTick,  setCurTick]  = useState("");
+  const [done,     setDone]     = useState(false);
+  const [tab,      setTab]      = useState("scanner");
+
+  const abortRef = useRef(null);
+  const resRef   = useRef([]);
+  const errRef   = useRef([]);
+  const symbols = useMemo(()=>symbolsText.split(/[\s,;]+/).map(x=>x.trim().toUpperCase()).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i).slice(0,MAX_SYMBOLS),[symbolsText]);
+  const maxN = Math.min(count, symbols.length);
+
+  const runFinnhub = useCallback(async()=>{
+    if(!apiKey.trim()||!connOk) return;
+    abortRef.current=new AbortController();resRef.current=[];errRef.current=[];
+    setRunning(true);setDone(false);setResults([]);setErrors([]);setProgress(0);
+    const batch=symbols.slice(0,maxN).map(ticker=>({ticker,name:ticker,sector:"Unbekannt",region:""}));
+    let done_=0;
+    for(let i=0;i<batch.length;i+=CONCURRENCY){
+      if(abortRef.current?.signal.aborted) break;
+      const chunk=batch.slice(i,i+CONCURRENCY);
+      setCurTick(chunk.map(s=>s.ticker).join(", "));
+      const settled=await Promise.allSettled(chunk.map(async s=>{
+        const raw=await fetchWithRetry(s,apiKey,abortRef.current.signal);
+        return {...s,...raw,...calcScore(raw,s.sector)};
+      }));
+      settled.forEach((r,idx)=>{
+        if(r.status==="fulfilled"){
+          resRef.current=[...resRef.current,r.value];
+          setResults([...resRef.current]);
+        } else {
+          errRef.current=[...errRef.current,{...chunk[idx],error:(r.reason && r.reason.message ? r.reason.message : "Fehler")}];
+          setErrors([...errRef.current]);
+        }
+      });
+      done_+=chunk.length;
+      setProgress(Math.round(done_/batch.length*100));
+      if(i+CONCURRENCY<batch.length) await new Promise(r=>setTimeout(r,BATCH_DELAY_MS));
+    }
+    setRunning(false);setDone(true);setCurTick("");
+  },[apiKey,connOk,maxN,symbols]);
+
+  const estMin = Math.ceil(maxN*3.6/60);
+  const estSec = Math.round(maxN*3.6);
+
+  const canStart = !!apiKey && connOk;
+
+  const TABS=[
+    {id:"scanner",label:"Scanner",icon:"⚡"},
+    {id:"report", label:"Ergebnisse"+(results.length>0?" ("+results.length+")":""),icon:"📋"},
+  ];
+
+  return (
+    <div style={{
+      minHeight:"100vh",background:"transparent",color:A.t1,fontFamily:A.font,
+      paddingTop:"env(safe-area-inset-top,0px)",
+    }}>
+
+      {/* Header — Apple Navigation Bar style */}
+      <div style={{
+        background:"rgba(6,7,11,0.72)",
+        backdropFilter:"saturate(180%) blur(28px)",
+        WebkitBackdropFilter:"saturate(180%) blur(28px)",
+        borderBottom:"0.5px solid rgba(255,255,255,0.12)",
+        boxShadow:"0 10px 30px rgba(0,0,0,0.22)",
+        padding:"18px 20px 16px",position:"sticky",top:0,zIndex:100,
+      }}>
+        <div style={{maxWidth:860,margin:"0 auto"}}>
+          <div style={{
+            fontSize:11,fontWeight:600,color:A.blue,
+            textTransform:"uppercase",letterSpacing:"0.8px",
+            marginBottom:4,
+          }}>MSCI ACWI · Levermann · {APP_VERSION} · {BUILD_DATE}</div>
+          <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between"}}>
+            <h1 style={{
+              fontSize:32,fontWeight:800,letterSpacing:"-0.8px",lineHeight:1,
+            }}>
+              Top‑30 <span style={{color:A.blue}}>Screening</span>
+            </h1>
+            <div style={{fontSize:12,color:A.t3,marginBottom:2}}>
+              {symbols.length} Symbole
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab bar — Apple style */}
+      <div style={{
+        background:"rgba(6,7,11,0.58)",
+        backdropFilter:"saturate(180%) blur(24px)",WebkitBackdropFilter:"saturate(180%) blur(24px)",
+        borderBottom:"0.5px solid rgba(255,255,255,0.08)",
+        padding:"0 20px",position:"sticky",top:64,zIndex:99,
+      }}>
+        <div style={{maxWidth:860,margin:"0 auto",display:"flex",gap:24}}>
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{
+              display:"flex",alignItems:"center",gap:6,
+              padding:"12px 0",background:"transparent",border:"none",
+              borderBottom:"2px solid "+(tab===t.id?A.blue:"transparent"),
+              color:tab===t.id?A.blue:A.t3,
+              fontWeight:tab===t.id?600:400,fontSize:15,
+              cursor:"pointer",fontFamily:A.font,transition:"all .2s",
+              letterSpacing:"-0.1px",
+            }}>
+              <span style={{fontSize:14}}>{t.icon}</span>
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{maxWidth:960,margin:"0 auto",padding:"24px 18px 56px"}}>
+
+        {tab==="scanner" && (
+          <div className="fade-up">
+
+            {/* Finnhub Key */}
+            <Card style={{
+                border:"1px solid "+(connOk?A.green+"44":!apiKey?A.sep:"rgba(255,255,255,0.05)"),
+                transition:"border-color .3s",
+              }}>
+                <div style={{fontSize:13,fontWeight:600,color:A.t3,marginBottom:10,
+                  textTransform:"uppercase",letterSpacing:"0.5px"}}>
+                  🔑 Finnhub API Key
+                </div>
+                <input type="password"
+                  placeholder="Key von finnhub.io"
+                  value={apiKey}
+                  onChange={e=>{setApiKey(e.target.value);setConnOk(false);}}
+                />
+                <div style={{
+                  marginTop:10,fontSize:13,color:A.t3,lineHeight:1.6,
+                }}>
+                  <a href="https://finnhub.io" style={{color:A.blue,textDecoration:"none"}}>
+                    finnhub.io
+                  </a>
+                  {" "}→ Registrieren → Dashboard → API Key kopieren
+                </div>
+                <ConnTestPanel apiKey={apiKey} onResult={ok=>setConnOk(ok)}/>
+              </Card>
+
+            {/* Slider */}
+            <Card>
+              <div style={{
+                display:"flex",justifyContent:"space-between",
+                alignItems:"baseline",marginBottom:16,
+              }}>
+                <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+                  <span style={{
+                    fontSize:40,fontWeight:700,fontFamily:A.mono,
+                    color:A.t1,letterSpacing:"-1px",lineHeight:1,
+                  }}>{maxN}</span>
+                  <span style={{fontSize:17,color:A.t3}}>Aktien</span>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  {false ? (
+                    <span style={{
+                      fontSize:13,color:A.green,fontWeight:600,
+                      background:A.greenBg,padding:"4px 10px",borderRadius:100,
+                    }}>⚡ Sofort</span>
+                  ) : (
+                    <span style={{fontSize:13,color:A.t3}}>
+                      ~{estMin} Min. / {estSec}s
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <textarea value={symbolsText} onChange={e=>setSymbolsText(e.target.value)} disabled={running} placeholder="Ticker durch Komma, Leerzeichen oder Zeilenumbruch trennen" style={{minHeight:90,resize:"vertical"}} />
+              <div style={{fontSize:12,color:A.t3,marginTop:8}}>Auswahl: {symbols.length}/{MAX_SYMBOLS} Symbole · Filter: Eingabe oben bearbeiten</div>
+              <select value={plan} onChange={e=>{setPlan(e.target.value);RATE_BUCKET.rate=FINNHUB_PLAN[e.target.value].callsPerMinute/60000;RATE_BUCKET.capacity=FINNHUB_PLAN[e.target.value].burst;}} disabled={running} style={{marginTop:10}}><option value="free">Free · 60 Calls/Minute</option><option value="paid">Paid · 300 Calls/Minute</option></select>
+              <input type="range" min={1} max={Math.max(1,symbols.length)}
+                step={5} value={count}
+                onChange={e=>setCount(+e.target.value)}
+                disabled={running}/>
+
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
+                {[10,25,50,100,200,500].filter(v=>v<=symbols.length).map(v=>(
+                  <span key={v} onClick={()=>!running&&setCount(v)} style={{
+                    fontSize:12,fontFamily:A.mono,cursor:"pointer",
+                    color:v===count?A.blue:A.t3,
+                    fontWeight:v===count?700:400,
+                    transition:"color .15s",
+                  }}>{v}</span>
+                ))}
+              </div>
+            </Card>
+
+            {/* Action buttons */}
+            <div style={{display:"flex",gap:10,marginBottom:12}}>
+              <div style={{flex:1}}>
+                <PrimaryBtn
+                  onClick={runFinnhub}
+                  disabled={running||!canStart}
+                >
+                  {running
+                    ? "Analysiere… ("+progress+"%)"
+                    : done
+                      ? "Erneut analysieren"
+                      : !canStart
+                        ? "Verbindung prüfen ↑"
+                        : maxN+" Aktien analysieren"}
+                </PrimaryBtn>
+              </div>
+              {running && (
+                <PrimaryBtn
+                  danger
+                  onClick={()=>{abortRef.current?.abort();setRunning(false);setDone(true);}}
+                >
+                  Stop
+                </PrimaryBtn>
+              )}
+            </div>
+
+            {/* Progress */}
+            {running && (
+              <Card pad="14px 16px">
+                <div style={{
+                  display:"flex",justifyContent:"space-between",
+                  alignItems:"center",marginBottom:4,
+                }}>
+                  <span style={{
+                    fontSize:13,fontWeight:600,
+                    color:resRef.current.some(r=>r._endpointErrors&&
+                      r._endpointErrors.includes("Rate-Limit"))
+                      ?A.yellow:A.green,
+                  }}>
+                    {resRef.current.some(r=>r._endpointErrors&&
+                      r._endpointErrors.includes("Rate-Limit"))
+                      ?"⚠ Rate-Limit erkannt"
+                      :"📡 Finnhub Live-Abruf"}
+                    {" · "+resRef.current.length+" live"}
+                  </span>
+                  <span style={{
+                    fontSize:13,fontWeight:700,fontFamily:A.mono,color:A.blue,
+                  }}>{progress}%</span>
+                </div>
+                <div style={{
+                  fontSize:13,color:A.t3,marginBottom:10,
+                  animation:"pulse 1.5s ease-in-out infinite",
+                }}>{curTick}</div>
+                <div style={{height:4,background:"rgba(255,255,255,0.08)",borderRadius:2,overflow:"hidden"}}>
+                  <div style={{
+                    height:"100%",width:progress+"%",borderRadius:2,
+                    background:"linear-gradient(90deg,"+A.blue+","+A.green+")",
+                    transition:"width .3s ease",
+                  }}/>
+                </div>
+                {errors.length>0&&(
+                  <details style={{marginTop:10}}>
+                    <summary style={{fontSize:12,color:A.red,fontWeight:500}}>
+                      {errors.length} Fehler
+                    </summary>
+                    <div style={{
+                      fontSize:11,color:A.t3,marginTop:6,fontFamily:A.mono,lineHeight:1.8,
+                    }}>
+                      {errors.map(e=>e.ticker+": "+e.error).join(" | ")}
+                    </div>
+                  </details>
+                )}
+              </Card>
+            )}
+
+            <ResultsTable results={results} />
+
+            {!running&&!done&&(
+              <div style={{
+                display:"flex",flexDirection:"column",
+                alignItems:"center",justifyContent:"center",
+                padding:"60px 24px",textAlign:"center",
+              }}>
+                <div style={{
+                  width:80,height:80,borderRadius:24,
+                  background:"linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))",display:"flex",alignItems:"center",
+                  justifyContent:"center",fontSize:40,marginBottom:20,
+                  border:"1px solid rgba(255,255,255,0.14)",boxShadow:"0 22px 50px rgba(0,0,0,0.30)",
+                }}>🌍</div>
+                <div style={{fontSize:22,fontWeight:600,marginBottom:8,letterSpacing:"-0.3px"}}>
+                  ACWI Levermann Screening
+                </div>
+                <div style={{fontSize:15,color:A.t3,lineHeight:1.6,maxWidth:320}}>
+                  Finnhub-Live: Symbole eingeben, Anzahl einstellen und Analyse starten.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab==="report" && (
+          <div className="fade-up">
+            <ReportTab results={results} />
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(p) { super(p); this.state = {err:null}; }
+  renderError(e) { return {err:e}; }
+  render() {
+    if (this.state.err) return (
+      <div style={{padding:24,fontFamily:"-apple-system,sans-serif",background:"#000",minHeight:"100vh"}}>
+        <div style={{background:"#ff453a22",border:"1px solid #ff453a44",borderRadius:14,padding:20,color:"#ff453a"}}>
+          <div style={{fontSize:17,fontWeight:700,marginBottom:8}}>&#9888; Render Fehler</div>
+          <div style={{fontSize:14,marginBottom:8}}>{this.state.err.message}</div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,0.4)",fontFamily:"monospace",whiteSpace:"pre-wrap"}}>
+            {(this.state.err.stack||"").slice(0,500)}
+          </div>
+        </div>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+ErrorBoundary.getDerivedStateFromError = function(e) { return {err:e}; };
+
+try {
+  var boot = document.getElementById('boot');
+  if (boot) boot.style.display = 'none';
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    <ErrorBoundary><App/></ErrorBoundary>
+  );
+} catch(e) {
+  var r = document.getElementById('root');
+  if (r) r.innerHTML = '<div style="padding:24px;font-family:-apple-system,sans-serif;background:#000;min-height:100vh"><div style="background:#ff453a22;border:1px solid #ff453a44;border-radius:14px;padding:20px;color:#ff453a"><div style="font-size:17px;font-weight:700;margin-bottom:8px">&#9888; App Startfehler</div><div style="font-size:14px;margin-bottom:6px">' + String(e.message).replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]}) + '</div><div style="font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;white-space:pre-wrap;margin-top:8px">' + (e.stack||'').slice(0,400) + '</div></div></div>';
+}
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
